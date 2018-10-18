@@ -149,24 +149,6 @@ func (b *Board) Set(x, y int, bgrid [][]bool) {
 }
 
 func main() {
-	height := 10
-	width := 20
-
-	// init board
-	b := NewBoard(height, width)
-	b.Init()
-
-	b.Set(1, 1, [][]bool{
-		{false, false, false, true, true, false, false, false},
-		{false, false, true, false, false, true, false, false},
-		{false, true, false, false, false, false, true, false},
-		{true, false, false, false, false, false, false, true},
-		{true, false, false, false, false, false, false, true},
-		{false, true, false, false, false, false, true, false},
-		{false, false, true, false, false, true, false, false},
-		{false, false, false, true, true, false, false, false},
-	})
-
 	// init screen
 	encoding.Register()
 
@@ -185,6 +167,28 @@ func main() {
 		Foreground(tcell.ColorWhite)
 	s.SetStyle(defStyle)
 	s.EnableMouse()
+
+	width, height := s.Size()
+
+	// init board
+	b := NewBoard(height, width/2)
+	b.Init()
+	b.Set(1, 1, [][]bool{
+		{false, false, false, true, true, false, false, false},
+		{false, false, true, false, false, true, false, false},
+		{false, true, false, false, false, false, true, false},
+		{true, false, false, false, false, false, false, true},
+		{true, false, false, false, false, false, false, true},
+		{false, true, false, false, false, false, true, false},
+		{false, false, true, false, false, true, false, false},
+		{false, false, false, true, true, false, false, false},
+	})
+
+	// b.Set(80, 40, [][]bool{
+	// 	{false, true, false, false, false, false, false, false},
+	// 	{false, false, false, true, false, false, false, false},
+	// 	{true, true, false, false, true, true, true, false},
+	// })
 
 	for {
 		s.Clear()
