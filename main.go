@@ -2,7 +2,9 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 	"os"
+	"time"
 
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
@@ -11,12 +13,17 @@ import (
 type Cell struct {
 	state     bool
 	nextState bool
+	liveTime  int
 
 	aroundCells []*Cell
 }
 
 func (c *Cell) State() bool {
 	return c.state
+}
+
+func (c *Cell) LiveTime() int {
+	return c.liveTime
 }
 
 func (c *Cell) Switch() {
@@ -53,6 +60,11 @@ func (c *Cell) CalcNextState() {
 }
 
 func (c *Cell) Flush() {
+	if c.state && c.nextState {
+		c.liveTime++
+	} else {
+		c.liveTime = 0
+	}
 	c.state = c.nextState
 }
 
@@ -98,19 +110,8 @@ func (b *Board) Init() {
 	}
 }
 
-func (b *Board) State() [][]bool {
-	g := make([][]bool, b.height)
-	for i := 0; i < b.height; i++ {
-		g[i] = make([]bool, b.width)
-	}
-
-	for i := 0; i < b.height; i++ {
-		for j := 0; j < b.width; j++ {
-			g[i][j] = b.grid[i][j].State()
-		}
-	}
-
-	return g
+func (b *Board) State() [][]Cell {
+	return b.grid
 }
 
 func (b *Board) Next() {
@@ -143,12 +144,16 @@ func (b *Board) Print() {
 func (b *Board) Set(x, y int, bgrid [][]bool) {
 	for i, row := range bgrid {
 		for j, state := range row {
-			b.grid[y+i][x+j].Set(state)
+			if y+i < b.height && x+j < b.width {
+				b.grid[y+i][x+j].Set(state)
+			}
 		}
 	}
 }
 
 func main() {
+	rand.Seed(time.Now().Unix())
+	stop := false
 	// init screen
 	encoding.Register()
 
@@ -163,7 +168,6 @@ func main() {
 	}
 
 	defStyle := tcell.StyleDefault.
-		Background(tcell.ColorBlack).
 		Foreground(tcell.ColorWhite)
 	s.SetStyle(defStyle)
 	s.EnableMouse()
@@ -173,48 +177,89 @@ func main() {
 	// init board
 	b := NewBoard(height, width/2)
 	b.Init()
-	b.Set(1, 1, [][]bool{
-		{false, false, false, true, true, false, false, false},
-		{false, false, true, false, false, true, false, false},
-		{false, true, false, false, false, false, true, false},
-		{true, false, false, false, false, false, false, true},
-		{true, false, false, false, false, false, false, true},
-		{false, true, false, false, false, false, true, false},
-		{false, false, true, false, false, true, false, false},
-		{false, false, false, true, true, false, false, false},
+	// b.Set(1, 1, [][]bool{
+	// 	{false, false, false, true, true, false, false, false},
+	// 	{false, false, true, false, false, true, false, false},
+	// 	{false, true, false, false, false, false, true, false},
+	// 	{true, false, false, false, false, false, false, true},
+	// 	{true, false, false, false, false, false, false, true},
+	// 	{false, true, false, false, false, false, true, false},
+	// 	{false, false, true, false, false, true, false, false},
+	// 	{false, false, false, true, true, false, false, false},
+	// })
+
+	b.Set(80, 40, [][]bool{
+		{false, true, false, false, false, false, false, false},
+		{false, false, false, true, false, false, false, false},
+		{true, true, false, false, true, true, true, false},
 	})
 
-	// b.Set(80, 40, [][]bool{
-	// 	{false, true, false, false, false, false, false, false},
-	// 	{false, false, false, true, false, false, false, false},
-	// 	{true, true, false, false, true, true, true, false},
-	// })
+	ticker := time.NewTicker(50 * time.Millisecond)
+	defer ticker.Stop()
+
+	done := make(chan struct{}, 0)
+	stopSwtich := make(chan struct{}, 0)
+	reset := make(chan struct{}, 0)
+	go func() {
+		for {
+			ev := s.PollEvent()
+			switch ev := ev.(type) {
+			case *tcell.EventResize:
+				continue
+			case *tcell.EventKey:
+				if ev.Key() == tcell.KeyEnter {
+					reset <- struct{}{}
+				} else if ev.Key() == tcell.KeyEsc {
+					stopSwtich <- struct{}{}
+				} else {
+					done <- struct{}{}
+				}
+			default:
+				continue
+			}
+		}
+	}()
 
 	for {
 		s.Clear()
-		st := tcell.StyleDefault.Background(tcell.ColorRed)
 		for i, row := range b.State() {
-			for j, state := range row {
-				if state {
+			for j, cell := range row {
+				st := tcell.StyleDefault.Background(tcell.Color16 + tcell.Color(cell.LiveTime()))
+				if cell.State() {
 					s.SetCell(j*2, i, st, ' ')
 					s.SetCell(j*2+1, i, st, ' ')
 				}
 			}
 		}
-		s.Show()
-		ev := s.PollEvent()
-		switch ev := ev.(type) {
-		case *tcell.EventResize:
-			continue
-		case *tcell.EventKey:
-			if ev.Key() == tcell.KeyEnter {
-				b.Next()
-			} else {
-				s.Fini()
-				os.Exit(0)
+
+		select {
+		case <-reset:
+			stop = !stop
+			b.Init()
+			grid := make([][]bool, height)
+			for i := 0; i < height; i++ {
+				grid[i] = make([]bool, width)
 			}
-		default:
-			continue
+
+			for i := 0; i < height; i++ {
+				for j := 0; j < width; j++ {
+					grid[i][j] = rand.Int()%2 == 0
+				}
+			}
+			b.Set(0, 0, grid)
+			stop = !stop
+		case <-stopSwtich:
+			stop = !stop
+		case <-done:
+			s.Fini()
+			os.Exit(0)
+		case <-ticker.C:
+			if stop {
+				continue
+			} else {
+				b.Next()
+				s.Show()
+			}
 		}
 	}
 }
