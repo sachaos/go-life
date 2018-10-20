@@ -231,11 +231,11 @@ func main() {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	defer ticker.Stop()
 
-	done := make(chan struct{}, 0)
-	stopSwtich := make(chan struct{}, 0)
-	reset := make(chan struct{}, 0)
-	step := make(chan struct{}, 0)
-	clear := make(chan struct{}, 0)
+	done := make(chan struct{})
+	stopSwtich := make(chan struct{})
+	reset := make(chan struct{})
+	step := make(chan struct{})
+	clear := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
