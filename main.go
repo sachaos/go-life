@@ -36,22 +36,7 @@ func main() {
 	// init board
 	b := NewBoard(height, width/2)
 	b.Init()
-	// b.Set(1, 1, [][]bool{
-	// 	{false, false, false, true, true, false, false, false},
-	// 	{false, false, true, false, false, true, false, false},
-	// 	{false, true, false, false, false, false, true, false},
-	// 	{true, false, false, false, false, false, false, true},
-	// 	{true, false, false, false, false, false, false, true},
-	// 	{false, true, false, false, false, false, true, false},
-	// 	{false, false, true, false, false, true, false, false},
-	// 	{false, false, false, true, true, false, false, false},
-	// })
-
-	b.Set(80, 40, [][]bool{
-		{false, true, false, false, false, false, false, false},
-		{false, false, false, true, false, false, false, false},
-		{true, true, false, false, true, true, true, false},
-	})
+	b.Random()
 
 	ticker := time.NewTicker(50 * time.Millisecond)
 	defer ticker.Stop()
