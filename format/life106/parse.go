@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"io"
+	"os"
 )
 
 func newCells(width, height int) [][]bool {
@@ -12,6 +13,14 @@ func newCells(width, height int) [][]bool {
 		grid[i] = make([]bool, width)
 	}
 	return grid
+}
+
+func ParseFile(path string) ([][]bool, error) {
+	f, err := os.Open(path)
+	if err != nil {
+		return [][]bool{}, err
+	}
+	return Parse(f), nil
 }
 
 func Parse(r io.Reader) [][]bool {
