@@ -17,6 +17,11 @@ func putString(s tcell.Screen, x, y int, str string) {
 	}
 }
 
+var preset = [][]bool{
+	[]bool{true, true},
+	[]bool{true, true},
+}
+
 func main() {
 	rand.Seed(time.Now().Unix())
 	stop := false
@@ -65,6 +70,9 @@ func main() {
 				case tcell.Button1:
 					x, y := ev.Position()
 					b.Get(x/2, y).Switch()
+				case tcell.Button3:
+					x, y := ev.Position()
+					b.Set(x/2, y, preset)
 				default:
 					continue
 				}
@@ -133,7 +141,8 @@ func main() {
 			} else if hide == false {
 				_, height = s.Size()
 				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
-				putString(s, 0, 1, "LeftClick: switch state, RightClick: select preset")
+				putString(s, 0, 1, "LeftClick: switch state, RightClick: insert preset")
+				putString(s, 0, 2, "s: switch preset, Current: \"stone\"")
 				putString(s, 0, height-1, fmt.Sprintf("Time: %d", b.Time()))
 			}
 			s.Show()
