@@ -10,6 +10,36 @@ import (
 	"github.com/gdamore/tcell/encoding"
 )
 
+type Theme struct {
+	Colors []tcell.Color
+	Levels []int
+}
+
+var theme = Theme{
+	Colors: []tcell.Color{
+		tcell.NewRGBColor(50, 50, 255),
+		tcell.NewRGBColor(100, 100, 255),
+		tcell.NewRGBColor(125, 125, 255),
+		tcell.NewRGBColor(150, 150, 255),
+		tcell.NewRGBColor(175, 175, 255),
+		tcell.NewRGBColor(205, 205, 255),
+		tcell.NewRGBColor(230, 230, 255),
+		tcell.NewRGBColor(255, 255, 255),
+	},
+	Levels: []int{1, 1, 1, 1, 1, 1, 1},
+}
+
+func (t *Theme) Color(time int) tcell.Color {
+	total := 0
+	for i, l := range t.Levels {
+		total += l
+		if time < total {
+			return t.Colors[i]
+		}
+	}
+	return t.Colors[len(t.Colors)-1]
+}
+
 type Cell struct {
 	state     bool
 	nextState bool
@@ -151,6 +181,10 @@ func (b *Board) Set(x, y int, bgrid [][]bool) {
 	}
 }
 
+func (b *Board) Get(x, y int) *Cell {
+	return &b.grid[y][x]
+}
+
 func main() {
 	rand.Seed(time.Now().Unix())
 	stop := false
@@ -232,7 +266,7 @@ func main() {
 		s.Clear()
 		for i, row := range b.State() {
 			for j, cell := range row {
-				st := tcell.StyleDefault.Background(tcell.Color16 + tcell.Color(cell.LiveTime()))
+				st := tcell.StyleDefault.Background(theme.Color(cell.LiveTime()))
 				if cell.State() {
 					s.SetCell(j*2, i, st, ' ')
 					s.SetCell(j*2+1, i, st, ' ')
