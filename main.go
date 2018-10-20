@@ -235,6 +235,7 @@ func main() {
 	stopSwtich := make(chan struct{}, 0)
 	reset := make(chan struct{}, 0)
 	step := make(chan struct{}, 0)
+	clear := make(chan struct{}, 0)
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -258,6 +259,8 @@ func main() {
 					stopSwtich <- struct{}{}
 				} else if ev.Key() == tcell.KeyEsc {
 					done <- struct{}{}
+				} else if ev.Rune() == 'c' {
+					clear <- struct{}{}
 				}
 			default:
 				continue
@@ -301,6 +304,9 @@ func main() {
 		case <-done:
 			s.Fini()
 			os.Exit(0)
+		case <-clear:
+			b.Init()
+			s.Show()
 		case <-ticker.C:
 			if !stop {
 				b.Next()
