@@ -10,9 +10,17 @@ import (
 	"github.com/gdamore/tcell/encoding"
 )
 
+func putString(s tcell.Screen, x, y int, str string) {
+	st := tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
+	for i, byte := range str {
+		s.SetCell(x+i, y, st, byte)
+	}
+}
+
 func main() {
 	rand.Seed(time.Now().Unix())
 	stop := false
+	hide := false
 	// init screen
 	encoding.Register()
 
@@ -47,6 +55,7 @@ func main() {
 	step := make(chan struct{})
 	clear := make(chan struct{})
 	resize := make(chan struct{})
+	hideMessage := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -72,6 +81,8 @@ func main() {
 					clear <- struct{}{}
 				} else if ev.Rune() == 'r' {
 					reset <- struct{}{}
+				} else if ev.Rune() == 'h' {
+					hideMessage <- struct{}{}
 				}
 			default:
 				continue
@@ -114,9 +125,14 @@ func main() {
 		case <-clear:
 			b.Init()
 			s.Show()
+		case <-hideMessage:
+			hide = !hide
 		case <-ticker.C:
 			if !stop {
 				b.Next()
+			} else if hide == false {
+				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message")
+				putString(s, 0, 1, "LeftClick: switch state, RightClick: select preset")
 			}
 			s.Show()
 		}
