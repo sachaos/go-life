@@ -21,17 +21,27 @@ func NewBoard(height, width int) *Board {
 	return &board
 }
 
-func (b *Board) Init() {
-	b.grid = make([][]Cell, b.height)
-	for i := 0; i < b.height; i++ {
-		b.grid[i] = make([]Cell, b.width)
+func Cells(width, height int) [][]Cell {
+	cells := make([][]Cell, height)
+	for i := 0; i < height; i++ {
+		cells[i] = make([]Cell, width)
 	}
+	return cells
+}
 
+func (b *Board) Init() {
+	b.grid = Cells(b.width, b.height)
+	b.link()
+}
+
+func (b *Board) link() {
 	around := [8][2]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}}
 
 	// link
 	for i := 0; i < b.height; i++ {
 		for j := 0; j < b.width; j++ {
+			b.grid[i][j].UnLink()
+			aroundCells := []*Cell{}
 			for _, a := range around {
 				y := i + a[0]
 				x := j + a[1]
@@ -40,10 +50,29 @@ func (b *Board) Init() {
 					continue
 				}
 
-				b.grid[y][x].aroundCells = append(b.grid[y][x].aroundCells, &b.grid[i][j])
+				aroundCells = append(aroundCells, &b.grid[y][x])
 			}
+			b.grid[i][j].Link(aroundCells)
 		}
 	}
+}
+
+func (b *Board) Resize(width, height int) {
+	newGrid := Cells(width, height)
+	var minHeight int
+	if b.height > height {
+		minHeight = height
+	} else {
+		minHeight = b.height
+	}
+	for i := 0; i < minHeight; i++ {
+		copy(newGrid[i], b.grid[i])
+	}
+	b.grid = newGrid
+	b.width = width
+	b.height = height
+
+	b.link()
 }
 
 func (b *Board) State() [][]Cell {

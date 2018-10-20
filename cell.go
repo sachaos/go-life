@@ -8,6 +8,14 @@ type Cell struct {
 	aroundCells []*Cell
 }
 
+func (c *Cell) UnLink() {
+	c.aroundCells = []*Cell{}
+}
+
+func (c *Cell) Link(aroundCells []*Cell) {
+	c.aroundCells = aroundCells
+}
+
 func (c *Cell) State() bool {
 	return c.state
 }

@@ -61,6 +61,7 @@ func main() {
 	reset := make(chan struct{})
 	step := make(chan struct{})
 	clear := make(chan struct{})
+	resize := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -74,7 +75,7 @@ func main() {
 					continue
 				}
 			case *tcell.EventResize:
-				continue
+				resize <- struct{}{}
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyEnter {
 					step <- struct{}{}
@@ -123,6 +124,12 @@ func main() {
 			stop = !stop
 		case <-stopSwtich:
 			stop = !stop
+		case <-resize:
+			stopState := stop
+			stop = true
+			width, height := s.Size()
+			b.Resize(width/2, height)
+			stop = stopState
 		case <-step:
 			b.Next()
 			s.Show()
