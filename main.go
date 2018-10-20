@@ -131,8 +131,10 @@ func main() {
 			if !stop {
 				b.Next()
 			} else if hide == false {
-				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message")
+				_, height = s.Size()
+				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
 				putString(s, 0, 1, "LeftClick: switch state, RightClick: select preset")
+				putString(s, 0, height-1, fmt.Sprintf("Time: %d", b.Time()))
 			}
 			s.Show()
 		}

@@ -10,6 +10,7 @@ type Board struct {
 	width  int
 
 	grid [][]Cell
+	time int
 	// cells []*Cell
 }
 
@@ -92,6 +93,7 @@ func (b *Board) Random() {
 		}
 	}
 	b.Set(0, 0, grid)
+	b.time = 0
 }
 
 func (b *Board) Next() {
@@ -106,6 +108,11 @@ func (b *Board) Next() {
 			b.grid[i][j].Flush()
 		}
 	}
+	b.time++
+}
+
+func (b *Board) Time() int {
+	return b.time
 }
 
 func (b *Board) Print() {
