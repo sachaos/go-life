@@ -8,6 +8,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
+	"github.com/sachaos/go-life/format/life106"
 )
 
 func putString(s tcell.Screen, x, y int, str string) {
@@ -17,12 +18,13 @@ func putString(s tcell.Screen, x, y int, str string) {
 	}
 }
 
-var preset = [][]bool{
-	[]bool{true, true},
-	[]bool{true, true},
-}
-
 func main() {
+	preset, err := life106.ParseFile("./preset/glider.life")
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
+		os.Exit(1)
+	}
+
 	rand.Seed(time.Now().Unix())
 	stop := false
 	hide := false
