@@ -108,20 +108,10 @@ func main() {
 
 		select {
 		case <-reset:
-			stop = !stop
-			b.Init()
-			grid := make([][]bool, height)
-			for i := 0; i < height; i++ {
-				grid[i] = make([]bool, width)
-			}
-
-			for i := 0; i < height; i++ {
-				for j := 0; j < width; j++ {
-					grid[i][j] = rand.Int()%2 == 0
-				}
-			}
-			b.Set(0, 0, grid)
-			stop = !stop
+			stopState := stop
+			stop = true
+			b.Random()
+			stop = stopState
 		case <-stopSwtich:
 			stop = !stop
 		case <-resize:

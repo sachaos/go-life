@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"math/rand"
 )
 
 type Board struct {
@@ -77,6 +78,20 @@ func (b *Board) Resize(width, height int) {
 
 func (b *Board) State() [][]Cell {
 	return b.grid
+}
+
+func (b *Board) Random() {
+	grid := make([][]bool, b.height)
+	for i := 0; i < b.height; i++ {
+		grid[i] = make([]bool, b.width)
+	}
+
+	for i := 0; i < b.height; i++ {
+		for j := 0; j < b.width; j++ {
+			grid[i][j] = rand.Int()%2 == 0
+		}
+	}
+	b.Set(0, 0, grid)
 }
 
 func (b *Board) Next() {
