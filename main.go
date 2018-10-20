@@ -251,16 +251,16 @@ func main() {
 			case *tcell.EventResize:
 				continue
 			case *tcell.EventKey:
-				if ev.Rune() == 'r' {
-					reset <- struct{}{}
-				} else if ev.Key() == tcell.KeyEnter {
+				if ev.Key() == tcell.KeyEnter {
 					step <- struct{}{}
+				} else if ev.Key() == tcell.KeyEsc || ev.Rune() == 'q' {
+					done <- struct{}{}
 				} else if ev.Rune() == ' ' {
 					stopSwtich <- struct{}{}
-				} else if ev.Key() == tcell.KeyEsc {
-					done <- struct{}{}
 				} else if ev.Rune() == 'c' {
 					clear <- struct{}{}
+				} else if ev.Rune() == 'r' {
+					reset <- struct{}{}
 				}
 			default:
 				continue
