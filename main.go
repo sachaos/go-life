@@ -234,6 +234,7 @@ func main() {
 	done := make(chan struct{}, 0)
 	stopSwtich := make(chan struct{}, 0)
 	reset := make(chan struct{}, 0)
+	step := make(chan struct{}, 0)
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -249,11 +250,13 @@ func main() {
 			case *tcell.EventResize:
 				continue
 			case *tcell.EventKey:
-				if ev.Key() == tcell.KeyEnter {
+				if ev.Rune() == 'r' {
 					reset <- struct{}{}
-				} else if ev.Key() == tcell.KeyEsc {
+				} else if ev.Key() == tcell.KeyEnter {
+					step <- struct{}{}
+				} else if ev.Rune() == ' ' {
 					stopSwtich <- struct{}{}
-				} else {
+				} else if ev.Key() == tcell.KeyEsc {
 					done <- struct{}{}
 				}
 			default:
@@ -292,16 +295,17 @@ func main() {
 			stop = !stop
 		case <-stopSwtich:
 			stop = !stop
+		case <-step:
+			b.Next()
+			s.Show()
 		case <-done:
 			s.Fini()
 			os.Exit(0)
 		case <-ticker.C:
-			if stop {
-				continue
-			} else {
+			if !stop {
 				b.Next()
-				s.Show()
 			}
+			s.Show()
 		}
 	}
 }
