@@ -204,6 +204,14 @@ func main() {
 		for {
 			ev := s.PollEvent()
 			switch ev := ev.(type) {
+			case *tcell.EventMouse:
+				switch ev.Buttons() {
+				case tcell.Button1:
+					x, y := ev.Position()
+					b.Get(x/2, y).Switch()
+				default:
+					continue
+				}
 			case *tcell.EventResize:
 				continue
 			case *tcell.EventKey:
