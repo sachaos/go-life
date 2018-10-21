@@ -114,6 +114,9 @@ func main() {
 				if cell.State() {
 					s.SetCell(j*2, i, st, ' ')
 					s.SetCell(j*2+1, i, st, ' ')
+				} else {
+					s.SetCell(j*2, i, tcell.StyleDefault.Background(ThemeBlue.BackGround), ' ')
+					s.SetCell(j*2+1, i, tcell.StyleDefault.Background(ThemeBlue.BackGround), ' ')
 				}
 			}
 		}

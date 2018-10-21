@@ -5,25 +5,24 @@ import (
 )
 
 type Theme struct {
-	Colors []tcell.Color
-	Levels []int
+	BackGround tcell.Color
+	Colors     []tcell.Color
+	Levels     []int
 }
 
 var ThemeBlue = Theme{
+	BackGround: tcell.NewRGBColor(0, 0, 100),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(50, 50, 255),
 		tcell.NewRGBColor(100, 100, 255),
-		tcell.NewRGBColor(125, 125, 255),
 		tcell.NewRGBColor(150, 150, 255),
-		tcell.NewRGBColor(175, 175, 255),
-		tcell.NewRGBColor(205, 205, 255),
-		tcell.NewRGBColor(230, 230, 255),
 		tcell.NewRGBColor(255, 255, 255),
 	},
-	Levels: []int{1, 1, 1, 1, 1, 1, 1},
+	Levels: []int{1, 1, 1, 1},
 }
 
 var ThemeBlackAndWhite = Theme{
+	BackGround: tcell.NewRGBColor(0, 0, 0),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(255, 255, 255),
 	},
