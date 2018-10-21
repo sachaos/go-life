@@ -2,7 +2,7 @@
 
 Terminal based Conway's Game of Life. Implemented in Go.
 
-[![asciicast](https://asciinema.org/a/UYW3oAtROhkZWsdnOGSRMwedv.png)](https://asciinema.org/a/UYW3oAtROhkZWsdnOGSRMwedv)
+![demo](https://user-images.githubusercontent.com/6121271/47264728-44ec2d80-d557-11e8-8994-d4af53126fe5.gif)
 
 ## Features
 
