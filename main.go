@@ -28,6 +28,8 @@ func main() {
 	themes := []Theme{
 		ThemeBlackAndWhite,
 		ThemeOcean,
+		ThemeFire,
+		ThemeMatrix,
 		ThemeWhiteAndBlack,
 	}
 

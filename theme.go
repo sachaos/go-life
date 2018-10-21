@@ -23,6 +23,27 @@ var ThemeOcean = Theme{
 	Levels: []int{1, 1, 1, 1},
 }
 
+var ThemeFire = Theme{
+	Name:       "Fire",
+	BackGround: tcell.NewRGBColor(100, 0, 0),
+	Colors: []tcell.Color{
+		tcell.NewRGBColor(255, 50, 50),
+		tcell.NewRGBColor(255, 100, 100),
+		tcell.NewRGBColor(255, 150, 150),
+		tcell.NewRGBColor(255, 255, 255),
+	},
+	Levels: []int{1, 1, 1, 1},
+}
+
+var ThemeMatrix = Theme{
+	Name:       "Matrix",
+	BackGround: tcell.NewRGBColor(0, 0, 0),
+	Colors: []tcell.Color{
+		tcell.NewRGBColor(50, 255, 50),
+	},
+	Levels: []int{1},
+}
+
 var ThemeBlackAndWhite = Theme{
 	Name:       "Black and White",
 	BackGround: tcell.NewRGBColor(0, 0, 0),
