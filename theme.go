@@ -5,12 +5,14 @@ import (
 )
 
 type Theme struct {
+	Name       string
 	BackGround tcell.Color
 	Colors     []tcell.Color
 	Levels     []int
 }
 
-var ThemeBlue = Theme{
+var ThemeOcean = Theme{
+	Name:       "Ocean",
 	BackGround: tcell.NewRGBColor(0, 0, 100),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(50, 50, 255),
@@ -22,6 +24,7 @@ var ThemeBlue = Theme{
 }
 
 var ThemeBlackAndWhite = Theme{
+	Name:       "Black and White",
 	BackGround: tcell.NewRGBColor(0, 0, 0),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(255, 255, 255),

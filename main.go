@@ -25,6 +25,11 @@ func main() {
 		os.Exit(1)
 	}
 
+	themes := []Theme{
+		ThemeBlackAndWhite,
+		ThemeOcean,
+	}
+
 	rand.Seed(time.Now().Unix())
 	stop := false
 	hide := false
@@ -58,6 +63,7 @@ func main() {
 	defer ticker.Stop()
 
 	presetIndex := 0
+	themeIndex := 0
 
 	done := make(chan struct{})
 	stopSwtich := make(chan struct{})
@@ -67,6 +73,7 @@ func main() {
 	resize := make(chan struct{})
 	hideMessage := make(chan struct{})
 	switchPreset := make(chan struct{})
+	switchTheme := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -93,10 +100,12 @@ func main() {
 					stopSwtich <- struct{}{}
 				} else if ev.Rune() == 'c' {
 					clear <- struct{}{}
-				} else if ev.Rune() == 's' {
+				} else if ev.Rune() == 'p' {
 					switchPreset <- struct{}{}
 				} else if ev.Rune() == 'r' {
 					reset <- struct{}{}
+				} else if ev.Rune() == 't' {
+					switchTheme <- struct{}{}
 				} else if ev.Rune() == 'h' {
 					hideMessage <- struct{}{}
 				}
@@ -108,15 +117,16 @@ func main() {
 
 	for {
 		s.Clear()
+		bst := tcell.StyleDefault.Background(themes[themeIndex].BackGround)
 		for i, row := range b.State() {
 			for j, cell := range row {
-				st := tcell.StyleDefault.Background(ThemeBlue.Color(cell.LiveTime()))
+				st := tcell.StyleDefault.Background(themes[themeIndex].Color(cell.LiveTime()))
 				if cell.State() {
 					s.SetCell(j*2, i, st, ' ')
 					s.SetCell(j*2+1, i, st, ' ')
 				} else {
-					s.SetCell(j*2, i, tcell.StyleDefault.Background(ThemeBlue.BackGround), ' ')
-					s.SetCell(j*2+1, i, tcell.StyleDefault.Background(ThemeBlue.BackGround), ' ')
+					s.SetCell(j*2, i, bst, ' ')
+					s.SetCell(j*2+1, i, bst, ' ')
 				}
 			}
 		}
@@ -152,6 +162,12 @@ func main() {
 			}
 		case <-hideMessage:
 			hide = !hide
+		case <-switchTheme:
+			if themeIndex < len(themes)-1 {
+				themeIndex++
+			} else {
+				themeIndex = 0
+			}
 		case <-ticker.C:
 			if !stop {
 				b.Next()
@@ -159,7 +175,8 @@ func main() {
 				_, height = s.Size()
 				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
 				putString(s, 0, 1, "LeftClick: switch state, RightClick: insert preset")
-				putString(s, 0, 2, fmt.Sprintf("s: switch preset, Current: \"%s\"", presets[presetIndex].Name))
+				putString(s, 0, 2, fmt.Sprintf("p: switch preset, Current: \"%s\"", presets[presetIndex].Name))
+				putString(s, 0, 3, fmt.Sprintf("t: switch theme, Current: \"%s\"", themes[themeIndex].Name))
 				putString(s, 0, height-1, fmt.Sprintf("Time: %d", b.Time()))
 			}
 			s.Show()
