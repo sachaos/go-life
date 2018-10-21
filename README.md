@@ -2,6 +2,8 @@
 
 Terminal based Conway's Game of Life. Implemented in Go.
 
+<script id="asciicast-UYW3oAtROhkZWsdnOGSRMwedv" src="https://asciinema.org/a/UYW3oAtROhkZWsdnOGSRMwedv.js" async></script>
+
 ## Features
 
 * Run on your terminal!
