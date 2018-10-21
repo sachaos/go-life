@@ -36,3 +36,17 @@ $ make install
 ```shell
 $ go-life
 ```
+
+### Keymap
+
+```
+SPC: stop
+Enter: step
+c: clear
+r: random
+h: hide this message & status
+p: switch preset
+t: switch theme
+LeftClick: switch state
+RightClick: insert preset
+```
