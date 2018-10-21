@@ -13,6 +13,8 @@ type Preset struct {
 	Cells [][]bool
 }
 
+//go:generate packr
+
 func LoadPresets() ([]Preset, error) {
 	box := packr.NewBox("./files")
 
