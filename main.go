@@ -57,6 +57,8 @@ func main() {
 	ticker := time.NewTicker(50 * time.Millisecond)
 	defer ticker.Stop()
 
+	presetIndex := 0
+
 	done := make(chan struct{})
 	stopSwtich := make(chan struct{})
 	reset := make(chan struct{})
@@ -64,6 +66,7 @@ func main() {
 	clear := make(chan struct{})
 	resize := make(chan struct{})
 	hideMessage := make(chan struct{})
+	switchPreset := make(chan struct{})
 	go func() {
 		for {
 			ev := s.PollEvent()
@@ -75,7 +78,7 @@ func main() {
 					b.Get(x/2, y).Switch()
 				case tcell.Button3:
 					x, y := ev.Position()
-					b.Set(x/2, y, presets[1].Cells)
+					b.Set(x/2, y, presets[presetIndex].Cells)
 				default:
 					continue
 				}
@@ -90,6 +93,8 @@ func main() {
 					stopSwtich <- struct{}{}
 				} else if ev.Rune() == 'c' {
 					clear <- struct{}{}
+				} else if ev.Rune() == 's' {
+					switchPreset <- struct{}{}
 				} else if ev.Rune() == 'r' {
 					reset <- struct{}{}
 				} else if ev.Rune() == 'h' {
@@ -136,6 +141,12 @@ func main() {
 		case <-clear:
 			b.Init()
 			s.Show()
+		case <-switchPreset:
+			if presetIndex < len(presets)-1 {
+				presetIndex++
+			} else {
+				presetIndex = 0
+			}
 		case <-hideMessage:
 			hide = !hide
 		case <-ticker.C:
@@ -145,7 +156,7 @@ func main() {
 				_, height = s.Size()
 				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
 				putString(s, 0, 1, "LeftClick: switch state, RightClick: insert preset")
-				putString(s, 0, 2, "s: switch preset, Current: \"stone\"")
+				putString(s, 0, 2, fmt.Sprintf("s: switch preset, Current: \"%s\"", presets[presetIndex].Name))
 				putString(s, 0, height-1, fmt.Sprintf("Time: %d", b.Time()))
 			}
 			s.Show()
