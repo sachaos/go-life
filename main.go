@@ -8,7 +8,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
-	"github.com/sachaos/go-life/format/life106"
+	"github.com/sachaos/go-life/preset"
 )
 
 func putString(s tcell.Screen, x, y int, str string) {
@@ -19,7 +19,7 @@ func putString(s tcell.Screen, x, y int, str string) {
 }
 
 func main() {
-	preset, err := life106.ParseFile("./preset/glider.life")
+	presets, err := preset.LoadPresets()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
@@ -42,6 +42,7 @@ func main() {
 	}
 
 	defStyle := tcell.StyleDefault.
+		Background(tcell.ColorDarkCyan).
 		Foreground(tcell.ColorWhite)
 	s.SetStyle(defStyle)
 	s.EnableMouse()
@@ -74,7 +75,7 @@ func main() {
 					b.Get(x/2, y).Switch()
 				case tcell.Button3:
 					x, y := ev.Position()
-					b.Set(x/2, y, preset)
+					b.Set(x/2, y, presets[1].Cells)
 				default:
 					continue
 				}
@@ -104,7 +105,7 @@ func main() {
 		s.Clear()
 		for i, row := range b.State() {
 			for j, cell := range row {
-				st := tcell.StyleDefault.Background(ThemeBlackAndWhite.Color(cell.LiveTime()))
+				st := tcell.StyleDefault.Background(ThemeBlue.Color(cell.LiveTime()))
 				if cell.State() {
 					s.SetCell(j*2, i, st, ' ')
 					s.SetCell(j*2+1, i, st, ' ')
