@@ -27,7 +27,8 @@ func Parse(r io.Reader) [][]bool {
 	br := bufio.NewReader(r)
 
 	var list [][2]int
-	var minX, minY, maxX, maxY int
+	minX, minY := 999, 999
+	maxX, maxY := -999, -999
 	for {
 		line, _, err := br.ReadLine()
 		if err == io.EOF {
