@@ -7,6 +7,7 @@ import "github.com/gobuffalo/packr"
 // You can use the "packr clean" command to clean up this,
 // and any other packr generated files.
 func init() {
+	packr.PackJSONBytes("./files", "galaxy.life", "\"I0xpZmUgMS4wNgotMjYgLTE4Ci0yMyAtMTgKLTIxIC0xOAotMjggLTE3Ci0yNyAtMTcKLTI1IC0xNwotMjMgLTE3Ci0yMiAtMTcKLTIxIC0xNwotMjcgLTE2Ci0yMCAtMTYKLTI4IC0xNQotMjcgLTE1Ci0yMSAtMTUKLTI3IC0xMwotMjEgLTEzCi0yMCAtMTMKLTI4IC0xMgotMjEgLTEyCi0yNyAtMTEKLTI2IC0xMQotMjUgLTExCi0yMyAtMTEKLTIxIC0xMQotMjAgLTExCi0yNyAtMTAKLTI1IC0xMAotMjIgLTEw\"")
 	packr.PackJSONBytes("./files", "glider-gun.life", "\"I0xpZmUgMS4wNgo2IC00CjQgLTMKNiAtMwotNiAtMgotNSAtMgoyIC0yCjMgLTIKMTYgLTIKMTcgLTIKLTcgLTEKLTMgLTEKMiAtMQozIC0xCjE2IC0xCjE3IC0xCi0xOCAwCi0xNyAwCi04IDAKLTIgMAoyIDAKMyAwCi0xOCAxCi0xNyAxCi04IDEKLTQgMQotMiAxCi0xIDEKNCAxCjYgMQotOCAyCi0yIDIKNiAyCi03IDMKLTMgMwotNiA0Ci01IDQ=\"")
 	packr.PackJSONBytes("./files", "glider.life", "\"I0xpZmUgMS4wNiAKMCAtMSAKMSAwIAotMSAxIAowIDEgCjEgMQ==\"")
 }
