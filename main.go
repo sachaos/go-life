@@ -28,6 +28,7 @@ func main() {
 	themes := []Theme{
 		ThemeBlackAndWhite,
 		ThemeOcean,
+		ThemeWhiteAndBlack,
 	}
 
 	rand.Seed(time.Now().Unix())

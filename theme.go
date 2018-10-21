@@ -32,6 +32,15 @@ var ThemeBlackAndWhite = Theme{
 	Levels: []int{1},
 }
 
+var ThemeWhiteAndBlack = Theme{
+	Name:       "White and Black",
+	BackGround: tcell.NewRGBColor(255, 255, 255),
+	Colors: []tcell.Color{
+		tcell.NewRGBColor(0, 0, 0),
+	},
+	Levels: []int{1},
+}
+
 func (t *Theme) Color(time int) tcell.Color {
 	total := 0
 	for i, l := range t.Levels {
