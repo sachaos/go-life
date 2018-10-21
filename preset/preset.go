@@ -2,6 +2,7 @@ package preset
 
 import (
 	"bytes"
+	"sort"
 	"strings"
 
 	"github.com/gobuffalo/packr"
@@ -18,8 +19,15 @@ type Preset struct {
 func LoadPresets() ([]Preset, error) {
 	box := packr.NewBox("./files")
 
-	var presets []Preset
+	var names []string
 	for _, name := range box.List() {
+		names = append(names, name)
+	}
+
+	sort.Strings(names)
+
+	var presets []Preset
+	for _, name := range names {
 		byte, err := box.MustBytes(name)
 		if err != nil {
 			return nil, err
