@@ -49,10 +49,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	defStyle := tcell.StyleDefault.
-		Background(tcell.ColorDarkCyan).
-		Foreground(tcell.ColorWhite)
-	s.SetStyle(defStyle)
 	s.EnableMouse()
 
 	width, height := s.Size()
