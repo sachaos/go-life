@@ -170,7 +170,7 @@ func main() {
 		case <-ticker.C:
 			if !stop {
 				b.Next()
-			} else if hide == false {
+			} else if !hide {
 				_, height = s.Size()
 				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
 				putString(s, 0, 1, "LeftClick: switch state, RightClick: insert preset")
