@@ -93,7 +93,7 @@ func main() {
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyEnter {
 					step <- struct{}{}
-				} else if ev.Key() == tcell.KeyEsc || ev.Rune() == 'q' {
+				} else if ev.Key() == tcell.KeyEsc || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
 					done <- struct{}{}
 				} else if ev.Rune() == ' ' {
 					stopSwtich <- struct{}{}
