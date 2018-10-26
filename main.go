@@ -9,16 +9,11 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
 	"github.com/sachaos/go-life/preset"
+	"log"
 )
 
-func putString(s tcell.Screen, x, y int, str string) {
-	st := tcell.StyleDefault.Background(tcell.ColorGray).Foreground(tcell.ColorWhite)
-	for i, byte := range str {
-		s.SetCell(x+i, y, st, byte)
-	}
-}
-
 func main() {
+	log.Print("start")
 	presets, err := preset.LoadPresets()
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "%v\n", err)
@@ -34,79 +29,79 @@ func main() {
 	}
 
 	rand.Seed(time.Now().Unix())
-	stop := false
-	hide := false
+
 	// init screen
 	encoding.Register()
 
-	s, e := tcell.NewScreen()
-	if e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
+	s, err := tcell.NewScreen()
+	if err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
-	if e := s.Init(); e != nil {
-		fmt.Fprintf(os.Stderr, "%v\n", e)
+	if err := s.Init(); err != nil {
+		fmt.Fprintf(os.Stderr, "%v\n", err)
 		os.Exit(1)
 	}
+	defer s.Fini()
 
 	s.EnableMouse()
 
-	width, height := s.Size()
-
 	// init board
+	width, height := s.Size()
 	b := NewBoard(height, width/2)
 	b.Init()
 	b.Random()
 
+	// init ticker
 	ticker := time.NewTicker(50 * time.Millisecond)
 	defer ticker.Stop()
 
-	presetIndex := 0
-	themeIndex := 0
+	game := Game{
+		screen:  s,
+		board:   b,
+		themes:  themes,
+		presets: presets,
+		ticker:  ticker,
+		event:   make(chan Event),
+	}
 
-	done := make(chan struct{})
-	stopSwtich := make(chan struct{})
-	reset := make(chan struct{})
-	step := make(chan struct{})
-	clear := make(chan struct{})
-	resize := make(chan struct{})
-	hideMessage := make(chan struct{})
-	switchPreset := make(chan struct{})
-	switchTheme := make(chan struct{})
 	go func() {
 		for {
+			log.Print("for loop")
 			ev := s.PollEvent()
 			switch ev := ev.(type) {
 			case *tcell.EventMouse:
 				switch ev.Buttons() {
 				case tcell.Button1:
 					x, y := ev.Position()
-					b.Get(x/2, y).Switch()
+					game.event <- Event{Type: swtichState, X: x / 2, Y: y}
 				case tcell.Button3:
 					x, y := ev.Position()
-					b.Set(x/2, y, presets[presetIndex].Cells)
+					game.event <- Event{Type: putPreset, X: x / 2, Y: y}
 				default:
 					continue
 				}
 			case *tcell.EventResize:
-				resize <- struct{}{}
+				game.event <- Event{Type: resize}
 			case *tcell.EventKey:
 				if ev.Key() == tcell.KeyEnter {
-					step <- struct{}{}
+					log.Print("event: enter")
+					game.event <- Event{Type: step}
 				} else if ev.Key() == tcell.KeyEsc || ev.Key() == tcell.KeyCtrlC || ev.Rune() == 'q' {
-					done <- struct{}{}
+					log.Print("event: exit")
+					game.event <- Event{Type: done}
 				} else if ev.Rune() == ' ' {
-					stopSwtich <- struct{}{}
+					game.event <- Event{Type: switchStop}
 				} else if ev.Rune() == 'c' {
-					clear <- struct{}{}
+					game.event <- Event{Type: clear}
 				} else if ev.Rune() == 'p' {
-					switchPreset <- struct{}{}
+					game.event <- Event{Type: switchPreset}
 				} else if ev.Rune() == 'r' {
-					reset <- struct{}{}
+					game.event <- Event{Type: reset}
 				} else if ev.Rune() == 't' {
-					switchTheme <- struct{}{}
+					game.event <- Event{Type: switchTheme}
 				} else if ev.Rune() == 'h' {
-					hideMessage <- struct{}{}
+					game.event <- Event{Type: switchHide}
 				}
 			default:
 				continue
@@ -114,71 +109,8 @@ func main() {
 		}
 	}()
 
-	for {
-		s.Clear()
-		bst := tcell.StyleDefault.Background(themes[themeIndex].BackGround)
-		for i, row := range b.State() {
-			for j, cell := range row {
-				st := tcell.StyleDefault.Background(themes[themeIndex].Color(cell.LiveTime()))
-				if cell.State() {
-					s.SetCell(j*2, i, st, ' ')
-					s.SetCell(j*2+1, i, st, ' ')
-				} else {
-					s.SetCell(j*2, i, bst, ' ')
-					s.SetCell(j*2+1, i, bst, ' ')
-				}
-			}
-		}
-
-		select {
-		case <-reset:
-			stopState := stop
-			stop = true
-			b.Random()
-			stop = stopState
-		case <-stopSwtich:
-			stop = !stop
-		case <-resize:
-			stopState := stop
-			stop = true
-			width, height := s.Size()
-			b.Resize(width/2, height)
-			stop = stopState
-		case <-step:
-			b.Next()
-			s.Show()
-		case <-done:
-			s.Fini()
-			os.Exit(0)
-		case <-clear:
-			b.Init()
-			s.Show()
-		case <-switchPreset:
-			if presetIndex < len(presets)-1 {
-				presetIndex++
-			} else {
-				presetIndex = 0
-			}
-		case <-hideMessage:
-			hide = !hide
-		case <-switchTheme:
-			if themeIndex < len(themes)-1 {
-				themeIndex++
-			} else {
-				themeIndex = 0
-			}
-		case <-ticker.C:
-			if !stop {
-				b.Next()
-			} else if !hide {
-				_, height = s.Size()
-				putString(s, 0, 0, "SPC: start, Enter: next, c: clear, r: random, h: hide this message & status")
-				putString(s, 0, 1, "LeftClick: switch state, RightClick: insert preset")
-				putString(s, 0, 2, fmt.Sprintf("p: switch preset, Current: \"%s\"", presets[presetIndex].Name))
-				putString(s, 0, 3, fmt.Sprintf("t: switch theme, Current: \"%s\"", themes[themeIndex].Name))
-				putString(s, 0, height-1, fmt.Sprintf("Time: %d", b.Time()))
-			}
-			s.Show()
-		}
+	if err := game.Loop(); err != nil {
+		fmt.Fprintf(os.Stderr, err.Error())
+		os.Exit(1)
 	}
 }
