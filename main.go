@@ -10,6 +10,7 @@ import (
 	"github.com/gdamore/tcell/encoding"
 	"github.com/sachaos/go-life/preset"
 	"github.com/urfave/cli"
+	"log"
 )
 
 func initScreen() tcell.Screen {
@@ -94,6 +95,25 @@ func main() {
 	app.Name = "go-life"
 	app.Usage = "Conway's Game of Life"
 	app.Version = "0.2.0"
+
+	app.Flags = []cli.Flag{
+		cli.BoolFlag{
+			Name: "debug",
+		},
+	}
+
+	app.Before = func(c *cli.Context) error {
+		if c.Bool("debug") {
+			log.SetOutput(os.Stderr)
+		} else {
+			file, err := os.Open(os.DevNull)
+			if err != nil {
+				return err
+			}
+			log.SetOutput(file)
+		}
+		return nil
+	}
 
 	app.Commands = []cli.Command{
 		{
