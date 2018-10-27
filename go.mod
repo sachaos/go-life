@@ -10,6 +10,7 @@ require (
 	github.com/mattn/go-runewidth v0.0.3 // indirect
 	github.com/smartystreets/assertions v0.0.0-20180927180507-b2de0cb4f26d // indirect
 	github.com/smartystreets/goconvey v0.0.0-20180222194500-ef6db91d284a // indirect
+	github.com/urfave/cli v1.20.0
 	golang.org/x/text v0.3.0 // indirect
 	gopkg.in/DATA-DOG/go-sqlmock.v1 v1.3.0 // indirect
 )

@@ -9,6 +9,7 @@ import (
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
 	"github.com/sachaos/go-life/preset"
+	"github.com/urfave/cli"
 )
 
 func initScreen() tcell.Screen {
@@ -75,7 +76,16 @@ func main() {
 		ThemeWhiteAndBlack,
 	}
 
-	if err := startGame(themes, presets); err != nil {
+	app := cli.NewApp()
+	app.Name = "go-life"
+	app.Usage = "Conway's Game of Life"
+	app.Version = "0.2.0"
+
+	app.Action = func(c *cli.Context) error {
+		return startGame(themes, presets)
+	}
+
+	if err := app.Run(os.Args); err != nil {
 		fmt.Fprintf(os.Stderr, err.Error())
 		os.Exit(1)
 	}
