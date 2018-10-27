@@ -61,6 +61,20 @@ func startGame(themes []Theme, presets []preset.Preset) error {
 	return game.Loop()
 }
 
+func listPresets(c *cli.Context, presets []preset.Preset) error {
+	for _, preset := range presets {
+		fmt.Println(preset.Name)
+	}
+	return nil
+}
+
+func listThemes(c *cli.Context, themes []Theme) error {
+	for _, theme := range themes {
+		fmt.Println(theme.Name)
+	}
+	return nil
+}
+
 func main() {
 	presets, err := preset.LoadPresets()
 	if err != nil {
@@ -80,6 +94,23 @@ func main() {
 	app.Name = "go-life"
 	app.Usage = "Conway's Game of Life"
 	app.Version = "0.2.0"
+
+	app.Commands = []cli.Command{
+		{
+			Name:  "themes",
+			Usage: "list themes",
+			Action: func(c *cli.Context) error {
+				return listThemes(c, themes)
+			},
+		},
+		{
+			Name:  "presets",
+			Usage: "list presets",
+			Action: func(c *cli.Context) error {
+				return listPresets(c, presets)
+			},
+		},
+	}
 
 	app.Action = func(c *cli.Context) error {
 		return startGame(themes, presets)
