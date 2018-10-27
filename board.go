@@ -20,6 +20,8 @@ func NewBoard(height, width int) *Board {
 		width:  width,
 	}
 
+	board.Init()
+
 	return &board
 }
 
