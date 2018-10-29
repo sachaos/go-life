@@ -30,7 +30,7 @@ func initScreen() tcell.Screen {
 	return s
 }
 
-func startGame(themes []Theme, presets []preset.Preset, themeIndex int) error {
+func startGame(themes []Theme, presets []preset.Preset, themeIndex int, pattern *preset.Preset) error {
 	rand.Seed(time.Now().Unix())
 
 	s := initScreen()
@@ -40,7 +40,16 @@ func startGame(themes []Theme, presets []preset.Preset, themeIndex int) error {
 	width, height := s.Size()
 	b := NewBoard(height, width/2)
 
-	b.Random()
+	if pattern == nil {
+		b.Random()
+	} else {
+		pwidth, pheight := pattern.Size()
+		if pwidth > width || pheight > height {
+			return fmt.Errorf("Specified pattern is too big\n")
+		}
+
+		b.Set((width/2-pwidth)/2, (height-pheight)/2, pattern.Cells)
+	}
 
 	// init ticker
 	ticker := time.NewTicker(50 * time.Millisecond)
@@ -105,6 +114,9 @@ func main() {
 			Name:  "theme",
 			Value: "BlackAndWhite",
 		},
+		cli.StringFlag{
+			Name: "pattern",
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {
@@ -146,9 +158,24 @@ func main() {
 			}
 		}
 		if themeIndex == -1 {
-			return fmt.Errorf("Invalid theme name: %s", c.String("theme"))
+			return fmt.Errorf("Invalid theme name: %s\n", c.String("theme"))
 		}
-		return startGame(themes, presets, themeIndex)
+
+		var pattern *preset.Preset
+		specifiedPattern := c.String("pattern")
+		if specifiedPattern != "" {
+			for _, p := range presets {
+				if p.Name == specifiedPattern {
+					pattern = &p
+					break
+				}
+			}
+			if pattern.Name == "" {
+				return fmt.Errorf("Invalid pattern name: %s\n", specifiedPattern)
+			}
+		}
+
+		return startGame(themes, presets, themeIndex, pattern)
 	}
 
 	if err := app.Run(os.Args); err != nil {

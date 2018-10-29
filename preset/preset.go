@@ -14,6 +14,16 @@ type Preset struct {
 	Cells [][]bool
 }
 
+func (p *Preset) Size() (int, int) {
+	height := len(p.Cells)
+	if height == 0 {
+		return 0, 0
+	}
+
+	width := len(p.Cells[0])
+	return width, height
+}
+
 //go:generate packr
 
 func LoadPresets() ([]Preset, error) {
