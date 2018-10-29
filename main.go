@@ -30,7 +30,7 @@ func initScreen() tcell.Screen {
 	return s
 }
 
-func startGame(themes []Theme, presets []preset.Preset) error {
+func startGame(themes []Theme, presets []preset.Preset, themeIndex int) error {
 	rand.Seed(time.Now().Unix())
 
 	s := initScreen()
@@ -49,12 +49,13 @@ func startGame(themes []Theme, presets []preset.Preset) error {
 	event := make(chan Event)
 
 	game := Game{
-		screen:  s,
-		board:   b,
-		themes:  themes,
-		presets: presets,
-		ticker:  ticker,
-		event:   event,
+		screen:     s,
+		board:      b,
+		themes:     themes,
+		presets:    presets,
+		ticker:     ticker,
+		event:      event,
+		themeIndex: themeIndex,
 	}
 
 	go inputLoop(s, event)
@@ -100,6 +101,10 @@ func main() {
 		cli.BoolFlag{
 			Name: "debug",
 		},
+		cli.StringFlag{
+			Name:  "theme",
+			Value: "BlackAndWhite",
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {
@@ -133,7 +138,17 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
-		return startGame(themes, presets)
+		themeIndex := -1
+		for i, theme := range themes {
+			if theme.Name == c.String("theme") {
+				themeIndex = i
+				break
+			}
+		}
+		if themeIndex == -1 {
+			return fmt.Errorf("Invalid theme name: %s", c.String("theme"))
+		}
+		return startGame(themes, presets, themeIndex)
 	}
 
 	if err := app.Run(os.Args); err != nil {

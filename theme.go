@@ -45,7 +45,7 @@ var ThemeMatrix = Theme{
 }
 
 var ThemeBlackAndWhite = Theme{
-	Name:       "Black and White",
+	Name:       "BlackAndWhite",
 	BackGround: tcell.NewRGBColor(0, 0, 0),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(255, 255, 255),
@@ -54,7 +54,7 @@ var ThemeBlackAndWhite = Theme{
 }
 
 var ThemeWhiteAndBlack = Theme{
-	Name:       "White and Black",
+	Name:       "WhiteAndBlack",
 	BackGround: tcell.NewRGBColor(255, 255, 255),
 	Colors: []tcell.Color{
 		tcell.NewRGBColor(0, 0, 0),
