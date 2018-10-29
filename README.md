@@ -33,8 +33,22 @@ $ make install
 
 ## How to use
 
+### Start
+
 ```shell
 $ go-life
+```
+
+### Set pattern & theme
+
+```shell
+$ go-life --theme Ocean --pattern glider-gun
+```
+
+### Help
+
+```shell
+$ go-life --help
 ```
 
 ### Keymap
