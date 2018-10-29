@@ -38,7 +38,7 @@ func LoadPresets() ([]Preset, error) {
 
 	var presets []Preset
 	for _, name := range names {
-		byte, err := box.MustBytes(name)
+		byte, err := box.Find(name)
 		if err != nil {
 			return nil, err
 		}
