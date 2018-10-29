@@ -113,9 +113,11 @@ func main() {
 		cli.StringFlag{
 			Name:  "theme",
 			Value: "BlackAndWhite",
+			Usage: "Theme name",
 		},
 		cli.StringFlag{
-			Name: "pattern",
+			Name:  "pattern",
+			Usage: "Pattern name (e.g. glider, glider-gun)",
 		},
 	}
 
