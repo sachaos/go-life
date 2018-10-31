@@ -1,0 +1,7 @@
+#N 5x5 infinite growth
+#O Paul Callahan
+#C The only pattern that fits in a 5x5 box that exhibits infinite grow
+#C th.
+#C www.conwaylife.com/wiki/index.php?title=Infinite_growth
+x = 5, y = 5, rule = 23/3
+3obo$o4b$3b2o$b2obo$obobo!
