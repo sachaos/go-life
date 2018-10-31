@@ -15,5 +15,6 @@ func init() {
 	packr.PackJSONBytes("./files", "glider.life", "\"I0xpZmUgMS4wNiAKMCAtMSAKMSAwIAotMSAxIAowIDEgCjEgMQ==\"")
 	packr.PackJSONBytes("./files", "light-weight-space-ship.life", "\"I0xpZmUgMS4wNgotMSAtMgoyIC0yCi0yIC0xCi0yIDAKMiAwCi0yIDEKLTEgMQowIDEKMSAx\"")
 	packr.PackJSONBytes("./files", "pentadecathlon.life", "\"I0xpZmUgMS4wNgotMyAtMQoyIC0xCi01IDAKLTQgMAotMiAwCi0xIDAKMCAwCjEgMAozIDAKNCAwCi0zIDEKMiAx\"")
+	packr.PackJSONBytes("./files", "replicator.rle", "\"I04gUmVwbGljYXRvcg0KI08gTmF0aGFuIFRob21wc29uDQojQyBBIHJlcGxpY2F0b3IgZm9yIHRoZSBIaWdoTGlmZSBydWxlICgyMy8zNikuDQojQyB3d3cuY29ud2F5bGlmZS5jb20vd2lraS9pbmRleC5waHA/dGl0bGU9SGlnaExpZmUNCnggPSA1LCB5ID0gNSwgcnVsZSA9IDIzLzM2DQoyYjNvJGJvMmJvJG8zYm8kbzJib2IkM28h\"")
 	packr.PackJSONBytes("./files", "spider.life", "\"I0xpZmUgMS4wNgotNCAtMTEKNCAtMTEKLTEwIC0xMAotOSAtMTAKLTcgLTEwCi01IC0xMAotMyAtMTAKLTIgLTEwCjIgLTEwCjMgLTEwCjUgLTEwCjcgLTEwCjkgLTEwCjEwIC0xMAotMTMgLTkKLTEyIC05Ci0xMSAtOQotOSAtOQotNyAtOQotNiAtOQotNSAtOQo1IC05CjYgLTkKNyAtOQo5IC05CjExIC05CjEyIC05CjEzIC05Ci0xMyAtOAotOSAtOAotNyAtOAotMSAtOAoxIC04CjcgLTgKOSAtOAoxMyAtOAotOSAtNwotOCAtNwotMSAtNwoxIC03CjggLTcKOSAtNwotMTIgLTYKLTExIC02Ci0xIC02CjEgLTYKMTEgLTYKMTIgLTYKLTEyIC01Ci0xMSAtNQotOSAtNQotOCAtNQo4IC01CjkgLTUKMTEgLTUKMTIgLTUKLTggLTQKOCAtNA==\"")
 }

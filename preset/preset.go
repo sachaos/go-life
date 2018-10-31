@@ -7,6 +7,7 @@ import (
 
 	"github.com/gobuffalo/packr"
 	"github.com/sachaos/go-life/format/life106"
+	"github.com/sachaos/go-life/format/rle"
 )
 
 type Preset struct {
@@ -37,15 +38,25 @@ func LoadPresets() ([]Preset, error) {
 	sort.Strings(names)
 
 	var presets []Preset
-	for _, name := range names {
-		byte, err := box.Find(name)
+	for _, filename := range names {
+		byte, err := box.Find(filename)
 		if err != nil {
 			return nil, err
 		}
 
+		filenameSlice := strings.Split(filename, ".")
+		name := filenameSlice[0]
+		format := filenameSlice[1]
+
 		r := bytes.NewReader(byte)
 
-		cells := life106.Parse(r)
+		var cells [][]bool
+		if format == "rle" {
+			cells = rle.Parse(r)
+		} else {
+			cells = life106.Parse(r)
+		}
+
 		presets = append(presets, Preset{
 			Name:  strings.Split(name, ".")[0],
 			Cells: cells,

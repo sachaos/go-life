@@ -1,0 +1,6 @@
+#N Replicator
+#O Nathan Thompson
+#C A replicator for the HighLife rule (23/36).
+#C www.conwaylife.com/wiki/index.php?title=HighLife
+x = 5, y = 5, rule = 23/36
+2b3o$bo2bo$o3bo$o2bob$3o!
