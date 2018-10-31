@@ -112,9 +112,8 @@ func Parse(r io.Reader) [][]bool {
 			for p := 0; p < runLength.RunCount; p++ {
 				cells[j][i+p] = true
 			}
-		} else {
-			i = i + runLength.RunCount
 		}
+		i = i + runLength.RunCount
 	}
 
 	return cells
