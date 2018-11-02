@@ -18,7 +18,7 @@ Terminal based Conway's Game of Life. Implemented in Go.
 Go to release page and download.
 
 ```shell
-$ wget https://github.com/sachaos/go-life/releases/download/v0.1.0/go-life_darwin_amd64 -O /usr/local/bin/go-life
+$ wget https://github.com/sachaos/go-life/releases/download/v0.3.0/go-life_darwin_amd64 -O /usr/local/bin/go-life
 $ chmod +x /usr/local/bin/go-life
 ```
 
