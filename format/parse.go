@@ -29,7 +29,7 @@ func Parse(r io.Reader) ([][]bool, error) {
 	case Life106:
 		return life106.Parse(contentReader), nil
 	case Life105:
-		return nil, fmt.Errorf("Life1.05 is not implemented")
+		return nil, fmt.Errorf("Life1.05 is not implemented\n")
 	default:
 		return rle.Parse(contentReader), nil
 	}

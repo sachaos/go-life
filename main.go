@@ -42,7 +42,7 @@ func startGame(themes []Theme, presets []preset.Preset, themeIndex int, defaultC
 	width, height := s.Size()
 	b := NewBoard(height, width/2)
 
-	if len(defaultCells) == 0 {
+	if defaultCells == nil {
 		b.Random()
 	} else {
 		pheight := len(defaultCells)
@@ -183,7 +183,7 @@ func main() {
 					break
 				}
 			}
-			if len(defaultCells) == 0 {
+			if defaultCells == nil {
 				return fmt.Errorf("Invalid pattern name: %s\n", specifiedPattern)
 			}
 		}
