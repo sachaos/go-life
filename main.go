@@ -11,6 +11,7 @@ import (
 	"github.com/sachaos/go-life/format/rle"
 	"github.com/sachaos/go-life/preset"
 	"github.com/urfave/cli"
+	"io"
 	"log"
 )
 
@@ -189,9 +190,14 @@ func main() {
 
 		fileName := c.String("file")
 		if fileName != "" {
-			file, err := os.Open(fileName)
-			if err != nil {
-				return err
+			var file io.Reader
+			if fileName == "-" {
+				file = os.Stdin
+			} else {
+				file, err = os.Open(fileName)
+				if err != nil {
+					return err
+				}
 			}
 
 			defaultCells = rle.Parse(file)
