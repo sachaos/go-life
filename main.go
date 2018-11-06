@@ -8,7 +8,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
-	"github.com/sachaos/go-life/format/rle"
+	"github.com/sachaos/go-life/format"
 	"github.com/sachaos/go-life/preset"
 	"github.com/urfave/cli"
 	"io"
@@ -200,7 +200,10 @@ func main() {
 				}
 			}
 
-			defaultCells = rle.Parse(file)
+			defaultCells, err = format.Parse(file)
+			if err != nil {
+				return err
+			}
 		}
 
 		return startGame(themes, presets, themeIndex, defaultCells)

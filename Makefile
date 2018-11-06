@@ -4,8 +4,7 @@ ARTIFACTS_DIR=artifacts/${VERSION}
 GITHUB_USERNAME=sachaos
 
 test:
-	go test -v ./format/life106
-	go test -v ./format/rle
+	go test -v ./format/...
 
 prepare:
 	go get github.com/gobuffalo/packr/packr
