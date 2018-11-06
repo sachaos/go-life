@@ -8,6 +8,7 @@ import (
 
 	"github.com/gdamore/tcell"
 	"github.com/gdamore/tcell/encoding"
+	"github.com/sachaos/go-life/format/rle"
 	"github.com/sachaos/go-life/preset"
 	"github.com/urfave/cli"
 	"log"
@@ -30,7 +31,7 @@ func initScreen() tcell.Screen {
 	return s
 }
 
-func startGame(themes []Theme, presets []preset.Preset, themeIndex int, pattern *preset.Preset) error {
+func startGame(themes []Theme, presets []preset.Preset, themeIndex int, defaultCells [][]bool) error {
 	rand.Seed(time.Now().Unix())
 
 	s := initScreen()
@@ -40,15 +41,16 @@ func startGame(themes []Theme, presets []preset.Preset, themeIndex int, pattern 
 	width, height := s.Size()
 	b := NewBoard(height, width/2)
 
-	if pattern == nil {
+	if len(defaultCells) == 0 {
 		b.Random()
 	} else {
-		pwidth, pheight := pattern.Size()
+		pheight := len(defaultCells)
+		pwidth := len(defaultCells[0])
 		if pwidth > width || pheight > height {
 			return fmt.Errorf("Specified pattern is too big\n")
 		}
 
-		b.Set((width/2-pwidth)/2, (height-pheight)/2, pattern.Cells)
+		b.Set((width/2-pwidth)/2, (height-pheight)/2, defaultCells)
 	}
 
 	// init ticker
@@ -119,6 +121,10 @@ func main() {
 			Name:  "pattern",
 			Usage: "Pattern name (e.g. glider, glider-gun)",
 		},
+		cli.StringFlag{
+			Name:  "file",
+			Usage: "Pattern file",
+		},
 	}
 
 	app.Before = func(c *cli.Context) error {
@@ -152,6 +158,10 @@ func main() {
 	}
 
 	app.Action = func(c *cli.Context) error {
+		if c.String("pattern") != "" && c.String("file") != "" {
+			return fmt.Errorf("Using pattern and file option is not permitted")
+		}
+
 		themeIndex := -1
 		for i, theme := range themes {
 			if theme.Name == c.String("theme") {
@@ -163,21 +173,31 @@ func main() {
 			return fmt.Errorf("Invalid theme name: %s\n", c.String("theme"))
 		}
 
-		var pattern *preset.Preset
+		var defaultCells [][]bool
 		specifiedPattern := c.String("pattern")
 		if specifiedPattern != "" {
 			for _, p := range presets {
 				if p.Name == specifiedPattern {
-					pattern = &p
+					defaultCells = p.Cells
 					break
 				}
 			}
-			if pattern.Name == "" {
+			if len(defaultCells) == 0 {
 				return fmt.Errorf("Invalid pattern name: %s\n", specifiedPattern)
 			}
 		}
 
-		return startGame(themes, presets, themeIndex, pattern)
+		fileName := c.String("file")
+		if fileName != "" {
+			file, err := os.Open(fileName)
+			if err != nil {
+				return err
+			}
+
+			defaultCells = rle.Parse(file)
+		}
+
+		return startGame(themes, presets, themeIndex, defaultCells)
 	}
 
 	if err := app.Run(os.Args); err != nil {
