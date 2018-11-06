@@ -3,6 +3,7 @@ package format
 import (
 	"bufio"
 	"bytes"
+	"fmt"
 	"io"
 	"io/ioutil"
 
@@ -27,6 +28,8 @@ func Parse(r io.Reader) ([][]bool, error) {
 	switch DetectFormat(formatReader) {
 	case Life106:
 		return life106.Parse(contentReader), nil
+	case Life105:
+		return nil, fmt.Errorf("Life1.05 is not implemented")
 	default:
 		return rle.Parse(contentReader), nil
 	}
