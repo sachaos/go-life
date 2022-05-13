@@ -46,7 +46,11 @@ func (g *Game) Loop() error {
 		case ev := <-g.event:
 			switch ev.Type {
 			case swtichState:
-				g.board.Get(ev.X, ev.Y).Switch()
+				if (ev.X < g.board.width) && (ev.Y < g.board.height) && (ev.X >= 0) && (ev.Y >= 0) {
+					{
+						g.board.Get(ev.X, ev.Y).Switch()
+					}
+				}
 			case putPreset:
 				g.board.Set(ev.X, ev.Y, g.presets[g.presetIndex].Cells)
 			case resize:
