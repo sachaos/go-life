@@ -10,6 +10,6 @@ const (
 	switchHide   = "switchHide"
 	switchTheme  = "switchTheme"
 	resize       = "resize"
-	swtichState  = "switchState"
+	switchState  = "switchState"
 	putPreset    = "putPreset"
 )

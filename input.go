@@ -13,7 +13,7 @@ func inputLoop(s tcell.Screen, event chan<- Event) {
 			switch ev.Buttons() {
 			case tcell.Button1:
 				x, y := ev.Position()
-				event <- Event{Type: swtichState, X: x / 2, Y: y}
+				event <- Event{Type: switchState, X: x / 2, Y: y}
 			case tcell.Button3:
 				x, y := ev.Position()
 				event <- Event{Type: putPreset, X: x / 2, Y: y}
