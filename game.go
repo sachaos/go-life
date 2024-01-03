@@ -45,7 +45,7 @@ func (g *Game) Loop() error {
 		select {
 		case ev := <-g.event:
 			switch ev.Type {
-			case swtichState:
+			case switchState:
 				if (ev.X < g.board.width) && (ev.Y < g.board.height) && (ev.X >= 0) && (ev.Y >= 0) {
 					{
 						g.board.Get(ev.X, ev.Y).Switch()
