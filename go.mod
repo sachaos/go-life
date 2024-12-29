@@ -1,5 +1,7 @@
 module github.com/sachaos/go-life
 
+go 1.23.0
+
 require (
 	github.com/gdamore/tcell v1.1.0
 	github.com/gobuffalo/packr v1.19.0
